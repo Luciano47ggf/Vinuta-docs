@@ -52,11 +52,16 @@ Isso é importante: sem isso, qualquer pessoa poderia ler os dados dos convidado
 
 ```
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
     match /avaliacoes/{docId} {
+
       allow create: if true;
-      allow read, update, delete: if request.auth != null;
+
+      allow read, update, delete:
+        if request.auth != null
+        && request.auth.uid == "SEU_UID_ADMIN";
     }
   }
 }
@@ -101,3 +106,4 @@ Confira se as regras do Firestore (Passo 3) foram publicadas e se o `firebase-co
 
 **"Posso trocar a senha do admin depois?"**
 Sim, no Firebase em Authentication → Users, clique nos três pontinhos ao lado do usuário → "Redefinir senha".
+Site Vinuta QR
