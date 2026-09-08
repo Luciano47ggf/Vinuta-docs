@@ -106,4 +106,5 @@ Confira se as regras do Firestore (Passo 3) foram publicadas e se o `firebase-co
 
 **"Posso trocar a senha do admin depois?"**
 Sim, no Firebase em Authentication → Users, clique nos três pontinhos ao lado do usuário → "Redefinir senha".
-Site Vinuta QR
+
+"Site Vinuta QR"
