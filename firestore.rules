@@ -1,0 +1,33 @@
+rules_version = '2';
+
+// =====================================================================
+// REGRAS DE SEGURANÇA — FIRESTORE — PROJETO "vinuta-qr"
+// Coleção: nps_respostas
+// =====================================================================
+// Cole este conteúdo em:
+// Firebase Console → Firestore Database → Regras → Publicar
+// =====================================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /nps_respostas/{docId} {
+
+      // Qualquer visitante (sem login) pode CRIAR uma resposta,
+      // desde que o documento contenha SOMENTE os campos "nota" e
+      // "criadoEm", com "nota" sendo um número inteiro entre 0 e 10.
+      allow create: if
+        request.resource.data.keys().hasOnly(['nota', 'criadoEm']) &&
+        request.resource.data.nota is int &&
+        request.resource.data.nota >= 0 &&
+        request.resource.data.nota <= 10 &&
+        request.resource.data.criadoEm == request.time;
+
+      // Leitura: somente usuário autenticado (painel admin.html)
+      allow read: if request.auth != null;
+
+      // Atualização e exclusão: somente usuário autenticado
+      allow update, delete: if request.auth != null;
+    }
+  }
+}

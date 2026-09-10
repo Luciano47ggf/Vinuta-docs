@@ -171,11 +171,11 @@
   /* Stats */
   .stats{
     display:grid;
-    grid-template-columns:repeat(3, 1fr);
+    grid-template-columns:repeat(4, 1fr);
     gap:14px;
     margin-bottom:26px;
   }
-  @media (max-width:520px){ .stats{ grid-template-columns:1fr; } }
+  @media (max-width:640px){ .stats{ grid-template-columns:repeat(2, 1fr); } }
   .stat-card{
     background:var(--cream);
     border:1px solid #e8dcc4;
@@ -425,11 +425,15 @@
   <div class="stats">
     <div class="stat-card">
       <div class="num" id="statTotal">0</div>
-      <div class="label">AVALIAÇÕES</div>
+      <div class="label">RESPOSTAS</div>
+    </div>
+    <div class="stat-card">
+      <div class="num" id="statNps">0</div>
+      <div class="label">NPS</div>
     </div>
     <div class="stat-card">
       <div class="num" id="statAvg">0.0</div>
-      <div class="label">MÉDIA GERAL</div>
+      <div class="label">MÉDIA</div>
     </div>
     <div class="stat-card">
       <div class="num" id="statToday">0</div>
@@ -437,9 +441,25 @@
     </div>
   </div>
 
+  <div class="nps-card">
+    <div class="nps-card-top">
+      <h3>Classificação NPS</h3>
+      <div class="nps-legend">
+        <span><i class="dot" style="background:#a8563d"></i>Detratores</span>
+        <span><i class="dot" style="background:var(--gold)"></i>Neutros</span>
+        <span><i class="dot" style="background:var(--wine-900)"></i>Promotores</span>
+      </div>
+    </div>
+    <div class="nps-bar">
+      <div class="seg seg-detrator" id="segDetrator" style="width:0%"></div>
+      <div class="seg seg-passivo" id="segPassivo" style="width:0%"></div>
+      <div class="seg seg-promotor" id="segPromotor" style="width:0%"></div>
+    </div>
+  </div>
+
   <div class="histogram-card">
-    <h3>Votos por taça</h3>
-    <p class="histogram-sub">Quantas pessoas deram cada nota de 1 a 10</p>
+    <h3>Votos por nota</h3>
+    <p class="histogram-sub">Quantas pessoas deram cada nota de 0 a 10</p>
     <div class="histogram" id="histogram"></div>
   </div>
 
@@ -513,6 +533,13 @@
     });
   }
 
+  // classificação NPS: detrator 0–6, neutro/passivo 7–8, promotor 9–10
+  function categoryOf(nota){
+    if (nota >= 9) return 'promotor';
+    if (nota >= 7) return 'passivo';
+    return 'detrator';
+  }
+
   function scoreColor(score){
     if (score >= 9) return 'var(--wine-900)';
     if (score >= 7) return 'var(--gold)';
@@ -525,28 +552,41 @@
     const today = docs.filter(d => d.criadoEm && d.criadoEm.toDate().toDateString() === todayStr).length;
 
     let somaNotas = 0;
-    const counts = [0,0,0,0,0,0,0,0,0,0,0]; // índices 0–10 (0 não é usado)
+    let detratores = 0, passivos = 0, promotores = 0;
+    const counts = [0,0,0,0,0,0,0,0,0,0,0]; // índices 0–10
 
     docs.forEach(d => {
-      const nota = (typeof d.rating === 'number') ? d.rating : (typeof d.nota === 'number' ? d.nota : null);
-      if (nota !== null && nota >= 1 && nota <= 10) {
-        counts[nota]++;
-        somaNotas += nota;
-      }
+      const nota = (typeof d.nota === 'number') ? d.nota : null;
+      if (nota === null || nota < 0 || nota > 10) return;
+
+      counts[nota]++;
+      somaNotas += nota;
+
+      const cat = categoryOf(nota);
+      if (cat === 'detrator') detratores++;
+      else if (cat === 'passivo') passivos++;
+      else promotores++;
     });
 
     const media = total ? (somaNotas / total) : 0;
+    const nps = total ? Math.round(((promotores - detratores) / total) * 100) : 0;
 
     document.getElementById('statTotal').textContent = total;
+    document.getElementById('statNps').textContent = nps;
     document.getElementById('statAvg').textContent = media.toFixed(1);
     document.getElementById('statToday').textContent = today;
 
+    const pct = n => total ? (n/total*100) : 0;
+    document.getElementById('segDetrator').style.width = pct(detratores) + '%';
+    document.getElementById('segPassivo').style.width = pct(passivos) + '%';
+    document.getElementById('segPromotor').style.width = pct(promotores) + '%';
+
     renderHistogram(counts);
-    renderSummary({ total, media, counts });
+    renderSummary({ total, media, nps, counts, detratores, passivos, promotores });
   }
 
   function renderHistogram(counts){
-    const scores = [1,2,3,4,5,6,7,8,9,10];
+    const scores = [0,1,2,3,4,5,6,7,8,9,10];
     const maxCount = Math.max(...scores.map(s => counts[s]), 1);
     const el = document.getElementById('histogram');
     el.innerHTML = scores.map(score => {
@@ -561,7 +601,7 @@
     }).join('');
   }
 
-  function renderSummary({ total, media, counts }){
+  function renderSummary({ total, media, nps, counts, detratores, passivos, promotores }){
     const summaryText = document.getElementById('summaryText');
     const summaryGrid = document.getElementById('summaryGrid');
 
@@ -571,37 +611,34 @@
       return;
     }
 
-    const scores = [1,2,3,4,5,6,7,8,9,10];
-    let notaMaisComum = 1;
+    const scores = [0,1,2,3,4,5,6,7,8,9,10];
+    let notaMaisComum = 0;
     scores.forEach(s => { if (counts[s] > counts[notaMaisComum]) notaMaisComum = s; });
 
-    const satisfeitos = counts[9] + counts[10];
-    const insatisfeitos = counts[1] + counts[2] + counts[3] + counts[4];
-    const pctSatisfeitos = Math.round((satisfeitos/total)*100);
-    const pctInsatisfeitos = Math.round((insatisfeitos/total)*100);
+    const pct = n => Math.round((n/total)*100);
 
     let nivel, comentario;
-    if (media >= 9){
+    if (nps >= 75){
       nivel = 'excelente';
-      comentario = 'os convidados estão vivenciando uma experiência de degustação muito bem avaliada.';
-    } else if (media >= 7.5){
+      comentario = 'a experiência está gerando forte recomendação espontânea entre os convidados.';
+    } else if (nps >= 50){
       nivel = 'muito bom';
-      comentario = 'a maioria dos convidados avaliou bem a experiência, com espaço para encantar ainda mais.';
-    } else if (media >= 6){
+      comentario = 'a maioria dos convidados recomendaria a Vinuta, com espaço para conquistar os neutros.';
+    } else if (nps >= 0){
       nivel = 'razoável';
-      comentario = 'a experiência está sendo bem recebida, mas vale entender o que pesou nas notas mais baixas.';
+      comentario = 'há uma base de promotores, mas ainda existe uma parcela relevante de detratores a entender melhor.';
     } else {
       nivel = 'de atenção';
-      comentario = 'as notas indicam pontos de insatisfação que merecem atenção.';
+      comentario = 'o número de detratores supera o de promotores — vale investigar os pontos de insatisfação.';
     }
 
-    summaryText.innerHTML = `Com base em <strong>${total}</strong> avaliação${total===1?'':'s'}, a nota média foi <strong>${media.toFixed(1)}</strong> de 10, considerada <strong>${nivel}</strong>. A nota mais recorrente foi <strong>${notaMaisComum}</strong>. Em resumo, ${comentario}`;
+    summaryText.innerHTML = `Com base em <strong>${total}</strong> resposta${total===1?'':'s'}, a Vinuta atingiu um NPS de <strong>${nps}</strong>, considerado <strong>${nivel}</strong>. A nota média foi <strong>${media.toFixed(1)}</strong> e a nota mais recorrente foi <strong>${notaMaisComum}</strong>. Em resumo, ${comentario}`;
 
     summaryGrid.innerHTML = `
       <div class="summary-item"><div class="num">${media.toFixed(1)}</div><div class="label">Nota média</div></div>
-      <div class="summary-item"><div class="num">${notaMaisComum}</div><div class="label">Nota mais comum</div></div>
-      <div class="summary-item"><div class="num">${pctSatisfeitos}%</div><div class="label">Notas 9–10</div></div>
-      <div class="summary-item"><div class="num">${pctInsatisfeitos}%</div><div class="label">Notas 1–4</div></div>
+      <div class="summary-item"><div class="num">${pct(promotores)}%</div><div class="label">Promotores</div></div>
+      <div class="summary-item"><div class="num">${pct(passivos)}%</div><div class="label">Neutros</div></div>
+      <div class="summary-item"><div class="num">${pct(detratores)}%</div><div class="label">Detratores</div></div>
     `;
   }
 
@@ -613,14 +650,13 @@
     }
     list.innerHTML = docs.map(d => {
       const date = d.criadoEm ? d.criadoEm.toDate().toLocaleString('pt-BR') : '—';
-      const nota = (typeof d.rating === 'number') ? d.rating : (typeof d.nota === 'number' ? d.nota : 0);
+      const nota = (typeof d.nota === 'number') ? d.nota : 0;
       return `
         <div class="entry">
           <div class="entry-top">
             <span class="entry-score">${nota}/10</span>
             <span class="entry-date">${date}</span>
           </div>
-          ${d.comentario ? `<div class="entry-comment">${escapeHtml(d.comentario)}</div>` : ''}
         </div>`;
     }).join('');
   }
