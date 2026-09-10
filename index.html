@@ -230,27 +230,81 @@
     font-size:12px;
     color:var(--ink-soft);
     font-style:italic;
-    margin:0 0 24px;
+    margin:0 0 30px;
   }
+
+  .pour-stage{
+    position:relative;
+    padding-top:64px;
+    margin-bottom:2px;
+  }
+
+  .bottle{
+    position:absolute;
+    top:0;
+    left:0;
+    width:17px;
+    opacity:0;
+    transform:translate(-50%, -6px) rotate(0deg);
+    transform-origin:50% 94%;
+    transition:left .32s cubic-bezier(.4,0,.2,1), opacity .28s ease, transform .5s cubic-bezier(.65,0,.35,1);
+    pointer-events:none;
+    z-index:2;
+    filter:drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+  }
+  .bottle.visible{ opacity:1; transform:translate(-50%, 0) rotate(0deg); }
+  .bottle.visible.pour{ transform:translate(-50%, 0) rotate(-68deg); }
+  .bottle svg{ width:100%; height:auto; display:block; }
+
+  .neck-marker{
+    position:absolute;
+    top:0; left:50%;
+    width:1px; height:1px;
+  }
+
+  .wine-stream{
+    position:absolute;
+    top:0;
+    left:0;
+    width:2px;
+    height:0;
+    background:linear-gradient(180deg, #8f2540, #6e1424);
+    border-radius:2px;
+    opacity:0;
+    transform-origin:top center;
+    pointer-events:none;
+    z-index:1;
+  }
+  .wine-stream.flow{
+    animation:streamFlow .55s cubic-bezier(.3,.1,.3,1) forwards;
+  }
+  @keyframes streamFlow{
+    0%{ height:0; opacity:0; }
+    12%{ opacity:1; }
+    55%{ height:var(--stream-h, 30px); opacity:1; }
+    82%{ height:var(--stream-h, 30px); opacity:1; }
+    100%{ height:var(--stream-h, 30px); opacity:0; }
+  }
+
   .glasses{
     display:flex;
     justify-content:center;
     align-items:flex-end;
-    gap:4px;
+    gap:14px;
     margin-bottom:12px;
   }
   .glass-wrap{
-    display:flex; flex-direction:column; align-items:center; gap:5px;
+    display:flex; flex-direction:column; align-items:center; gap:7px;
     cursor:pointer;
     -webkit-tap-highlight-color:transparent;
-    padding:2px;
+    padding:3px;
     position:relative;
   }
   .glass-wrap::before{
     content:"";
     position:absolute;
-    top:-3px; left:50%;
-    width:26px; height:26px;
+    top:-4px; left:50%;
+    width:36px; height:36px;
     transform:translate(-50%,0) scale(0.5);
     background:radial-gradient(circle, rgba(184,147,90,0.35) 0%, rgba(184,147,90,0) 70%);
     border-radius:50%;
@@ -260,7 +314,7 @@
   }
   .glass-wrap.selected::before{ opacity:1; transform:translate(-50%,0) scale(1); }
   .glass-wrap svg{
-    width:23px; height:31px;
+    width:30px; height:42px;
     overflow:visible;
     transition:transform .3s cubic-bezier(.34,1.56,.64,1), filter .3s ease;
     position:relative;
@@ -268,22 +322,22 @@
   .glass-wrap:hover svg{ transform:translateY(-3px); }
   .glass-wrap.selected svg{
     animation:glassPop .5s cubic-bezier(.34,1.56,.64,1);
-    filter:drop-shadow(0 4px 8px rgba(76,18,32,0.35));
+    filter:drop-shadow(0 5px 10px rgba(76,18,32,0.35));
   }
   @keyframes glassPop{
     0%{ transform:scale(1) translateY(0); }
-    35%{ transform:scale(1.22) translateY(-6px); }
+    35%{ transform:scale(1.18) translateY(-6px); }
     60%{ transform:scale(0.95) translateY(0px); }
     100%{ transform:scale(1) translateY(0); }
   }
 
   .glass-fill{
-    transition:height .55s cubic-bezier(.34,1.56,.64,1), y .55s cubic-bezier(.34,1.56,.64,1);
+    transition:height .5s cubic-bezier(.34,1.56,.64,1), y .5s cubic-bezier(.34,1.56,.64,1);
   }
   .glass-outline{
     fill:none;
     stroke:#c9b190;
-    stroke-width:1.5;
+    stroke-width:1.6;
     transition:stroke .3s;
   }
   .selected .glass-outline{ stroke:var(--wine-800); }
@@ -302,14 +356,14 @@
   }
 
   .glass-num{
-    font-size:9px;
+    font-size:10.5px;
     color:#b7a58f;
     font-family:'Cormorant Garamond',serif;
     font-weight:600;
-    letter-spacing:0;
+    letter-spacing:.2px;
     transition:color .25s, background .25s, box-shadow .25s;
-    min-width:16px;
-    height:16px;
+    min-width:19px;
+    height:19px;
     display:flex; align-items:center; justify-content:center;
     border-radius:50%;
   }
@@ -317,18 +371,6 @@
     color:var(--cream);
     background:var(--wine-900);
     box-shadow:0 3px 7px -1px rgba(76,18,32,0.45);
-  }
-
-  .scale-labels{
-    display:flex;
-    justify-content:space-between;
-    max-width:250px;
-    margin:0 auto 16px;
-    font-size:9.5px;
-    letter-spacing:.5px;
-    color:#b7a58f;
-    text-transform:uppercase;
-    font-style:italic;
   }
 
   .rating-hint{
@@ -581,7 +623,7 @@
 
       <div class="rating-block">
         <h3 class="rating-title">O quanto você recomendaria a Vinuta?</h3>
-        <p class="rating-desc">Numa escala de 0 a 10, para um amigo ou familiar</p>
+        <p class="rating-desc">Numa escala de 1 a 5, para um amigo ou familiar</p>
 
         <svg width="0" height="0" style="position:absolute">
           <defs>
@@ -589,12 +631,31 @@
               <stop offset="0%" stop-color="#8f2540"/>
               <stop offset="100%" stop-color="#48101c"/>
             </linearGradient>
+            <linearGradient id="bottleGlassGradient" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#2a0812"/>
+              <stop offset="45%" stop-color="#4c1220"/>
+              <stop offset="100%" stop-color="#22070f"/>
+            </linearGradient>
           </defs>
         </svg>
-        <div class="glasses" id="glasses"></div>
-        <div class="scale-labels">
-          <span>pouco provável</span>
-          <span>muito provável</span>
+        <div class="pour-stage" id="pourStage">
+          <div class="bottle" id="bottle">
+            <svg viewBox="0 0 24 92" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 0 H15 V19 C15 19 21 25 21 34 V84 C21 88.5 17 92 12 92 C7 92 3 88.5 3 84 V34 C3 25 9 19 9 19 Z"
+                    fill="url(#bottleGlassGradient)" stroke="#1a0509" stroke-width="0.8"/>
+              <rect x="9" y="0" width="6" height="5" rx="1" fill="#b8935a"/>
+              <rect x="9" y="5" width="6" height="3" fill="#8a6a3a"/>
+              <g transform="rotate(-18 12 46)">
+                <rect x="-6" y="39" width="36" height="15" fill="#f4ede2"/>
+                <circle cx="12" cy="46.5" r="5.4" fill="none" stroke="#4c1220" stroke-width="1"/>
+                <path d="M9 44 L12 50.5 L15 44 C15 44 13.2 44.6 12 47.2 C10.8 44.6 9 44 9 44 Z" fill="#4c1220"/>
+              </g>
+              <path d="M5 30 C5 30 7 33 7 40 L7 78 C7 78 5.5 74 5.5 68 Z" fill="rgba(255,255,255,0.08)"/>
+            </svg>
+            <div class="neck-marker" id="neckMarker"></div>
+          </div>
+          <div class="glasses" id="glasses"></div>
+          <div class="wine-stream" id="wineStream"></div>
         </div>
         <div class="rating-hint" id="ratingHint">Toque em uma taça para escolher sua nota</div>
       </div>
@@ -643,28 +704,32 @@
 <script>
   // Build 11 animated wine glasses (NPS scale 0–10)
   const glassesContainer = document.getElementById('glasses');
+  const pourStage = document.getElementById('pourStage');
+  const bottle = document.getElementById('bottle');
+  const neckMarker = document.getElementById('neckMarker');
+  const wineStream = document.getElementById('wineStream');
   const hint = document.getElementById('ratingHint');
   let currentRating = null;
 
-  function categoryOf(value){
-    if(value >= 9) return 'promotor';
-    if(value >= 7) return 'passivo';
-    return 'detrator';
-  }
-
-  const hintByCategory = {
-    detrator: "Obrigado pela sinceridade — vamos melhorar.",
-    passivo: "Que bom que gostou da experiência.",
-    promotor: "Que alegria! Obrigado por recomendar a Vinuta."
+  const hints = {
+    0: "Nada provável",
+    1: "Pouco provável",
+    2: "Pouco provável",
+    3: "Neutro",
+    4: "Muito provável",
+    5: "Extremamente provável"
   };
 
-  const successMsgByCategory = {
-    detrator: "Agradecemos sua sinceridade.<br>Sua opinião é essencial para aprimorarmos cada detalhe da experiência Vinuta.",
-    passivo: "Obrigado por compartilhar sua experiência conosco.<br>Vamos trabalhar para tornar o próximo encontro ainda mais especial.",
-    promotor: "Foi um prazer brindar este momento com você.<br>Que este seja apenas o primeiro de muitos encontros com a Vinuta."
+  const successMsgByRating = {
+    0: "Agradecemos sua sinceridade.<br>Sua opinião é essencial para aprimorarmos cada detalhe da experiência Vinuta.",
+    1: "Agradecemos sua sinceridade.<br>Sua opinião é essencial para aprimorarmos cada detalhe da experiência Vinuta.",
+    2: "Agradecemos sua sinceridade.<br>Sua opinião é essencial para aprimorarmos cada detalhe da experiência Vinuta.",
+    3: "Obrigado por compartilhar sua experiência conosco.<br>Vamos trabalhar para tornar o próximo encontro ainda mais especial.",
+    4: "Foi um prazer brindar este momento com você.<br>Que este seja apenas o primeiro de muitos encontros com a Vinuta.",
+    5: "Foi um prazer brindar este momento com você.<br>Que este seja apenas o primeiro de muitos encontros com a Vinuta."
   };
 
-  for(let i=0;i<=10;i++){
+  for(let i=1;i<=5;i++){
     const wrap = document.createElement('div');
     wrap.className = 'glass-wrap';
     wrap.dataset.value = i;
@@ -691,13 +756,37 @@
     glassesContainer.appendChild(wrap);
   }
 
-  function selectRating(value){
-    currentRating = value;
-    const allWraps = glassesContainer.querySelectorAll('.glass-wrap');
-    allWraps.forEach(w => {
+  let pourTimers = [];
+  let tiltEndHandler = null;
+  const POUR_ANGLE_DEG = -68;
+  const PIVOT_Y_PCT = 0.94; // must match .bottle's transform-origin (50% 94%)
+  let neckOffsetX = null; // how far sideways the neck lands once tilted, computed from real bottle size
+
+  function getNeckOffsetX(){
+    if (neckOffsetX !== null) return neckOffsetX;
+    const rect = bottle.getBoundingClientRect();
+    const originY = rect.height * PIVOT_Y_PCT;
+    // neck sits straight above the pivot before rotating: vector (0, -originY)
+    const rad = POUR_ANGLE_DEG * Math.PI / 180;
+    const cos = Math.cos(rad), sin = Math.sin(rad);
+    neckOffsetX = (0 * cos) - (-originY * sin); // x' = x·cosθ − y·sinθ
+    return neckOffsetX;
+  }
+
+  function clearPourTimers(){
+    pourTimers.forEach(t => clearTimeout(t));
+    pourTimers = [];
+    if (tiltEndHandler) {
+      bottle.removeEventListener('transitionend', tiltEndHandler);
+      tiltEndHandler = null;
+    }
+  }
+
+  function setGlassesFilled(uptoValue){
+    glassesContainer.querySelectorAll('.glass-wrap').forEach(w => {
       const v = parseInt(w.dataset.value);
       const fillRect = w.querySelector('.glass-fill');
-      if(v === value){
+      if (v > 0 && v <= uptoValue) {
         w.classList.add('selected');
         fillRect.setAttribute('height', '11');
         fillRect.setAttribute('y', '4');
@@ -707,8 +796,92 @@
         fillRect.setAttribute('y', '15');
       }
     });
-    hint.textContent = hintByCategory[categoryOf(value)];
+  }
+
+  function pourInto(targetWrap, value){
+    clearPourTimers();
+    bottle.classList.remove('pour');
+    wineStream.classList.remove('flow');
+    void wineStream.offsetWidth; // force reflow so the animation can restart
+
+    const stageRect = pourStage.getBoundingClientRect();
+    const glassRect = targetWrap.getBoundingClientRect();
+    const glassCenterX = glassRect.left + glassRect.width / 2 - stageRect.left;
+    // shift the bottle so that, once tilted, the neck ends up right above the glass
+    const targetX = glassCenterX - getNeckOffsetX();
+    const wasVisible = bottle.classList.contains('visible');
+
+    if (!wasVisible) {
+      // first appearance: place instantly (no slide-in from a stale spot), then fade+pop in
+      bottle.style.transition = 'none';
+      bottle.style.left = targetX + 'px';
+      void bottle.offsetWidth;
+      bottle.style.transition = '';
+      bottle.classList.add('visible');
+      pourTimers.push(setTimeout(() => startTilt(targetWrap, value), 260));
+    } else {
+      // already on screen: glide smoothly to the newly picked glass
+      bottle.style.left = targetX + 'px';
+      pourTimers.push(setTimeout(() => startTilt(targetWrap, value), 300));
+    }
+  }
+
+  function startTilt(targetWrap, value){
+    tiltEndHandler = (e) => {
+      if (e.target !== bottle || e.propertyName !== 'transform') return;
+      bottle.removeEventListener('transitionend', tiltEndHandler);
+      tiltEndHandler = null;
+      landPour(targetWrap, value);
+    };
+    bottle.addEventListener('transitionend', tiltEndHandler);
+    bottle.classList.add('pour');
+    // safety net in case transitionend doesn't fire for any reason
+    pourTimers.push(setTimeout(() => {
+      if (tiltEndHandler) {
+        bottle.removeEventListener('transitionend', tiltEndHandler);
+        tiltEndHandler = null;
+        landPour(targetWrap, value);
+      }
+    }, 560));
+  }
+
+  function landPour(targetWrap, value){
+    const stageRect = pourStage.getBoundingClientRect();
+    const neckRect = neckMarker.getBoundingClientRect();
+    const glassRect = targetWrap.getBoundingClientRect();
+
+    const startX = neckRect.left - stageRect.left;
+    const startY = neckRect.top - stageRect.top;
+    const glassTopY = glassRect.top - stageRect.top + 4;
+    const streamHeight = Math.max(glassTopY - startY, 8);
+
+    wineStream.style.left = startX + 'px';
+    wineStream.style.top = startY + 'px';
+    wineStream.style.setProperty('--stream-h', streamHeight + 'px');
+    wineStream.classList.add('flow');
+
+    // the glass only fills once the stream actually lands — keeps cause and effect in sync
+    setGlassesFilled(value);
+
+    pourTimers.push(setTimeout(() => bottle.classList.remove('pour'), 620));
+    pourTimers.push(setTimeout(() => bottle.classList.remove('visible'), 1120));
+  }
+
+  function selectRating(value){
+    currentRating = value;
+    hint.textContent = hints[value] || '';
     hint.style.color = 'var(--gold)';
+
+    if (value === 0) {
+      clearPourTimers();
+      bottle.classList.remove('pour', 'visible');
+      wineStream.classList.remove('flow');
+      setGlassesFilled(0);
+      return;
+    }
+
+    const targetWrap = glassesContainer.querySelector(`.glass-wrap[data-value="${value}"]`);
+    if (targetWrap) pourInto(targetWrap, value);
   }
 
   // Submit -> validate, save to Firestore, then show success screen
@@ -722,7 +895,7 @@
     formError.textContent = '';
 
     if (currentRating === null) {
-      formError.textContent = 'Escolha uma taça de 0 a 10 para dar sua nota.';
+      formError.textContent = 'Escolha uma taça para avaliar a experiência.';
       return;
     }
 
@@ -731,12 +904,11 @@
 
     try {
       await db.collection('avaliacoes').add({
-        nota: currentRating,
-        categoria: categoryOf(currentRating),
+        rating: currentRating,
         criadoEm: firebase.firestore.FieldValue.serverTimestamp()
       });
 
-      document.getElementById('successMsg').innerHTML = successMsgByCategory[categoryOf(currentRating)];
+      document.getElementById('successMsg').innerHTML = successMsgByRating[currentRating];
 
       formScreen.classList.remove('active');
       successScreen.classList.add('active');
@@ -760,14 +932,12 @@
     formScreen.classList.add('active');
     // reset form state
     currentRating = null;
-    glassesContainer.querySelectorAll('.glass-wrap').forEach(w=>{
-      w.classList.remove('selected');
-      const fillRect = w.querySelector('.glass-fill');
-      fillRect.setAttribute('height','0');
-      fillRect.setAttribute('y','15');
-    });
+    setGlassesFilled(0);
     hint.textContent = 'Toque em uma taça para escolher sua nota';
     formError.textContent = '';
+    clearPourTimers();
+    bottle.classList.remove('visible','pour');
+    wineStream.classList.remove('flow');
   });
 </script>
 

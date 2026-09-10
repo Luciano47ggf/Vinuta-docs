@@ -277,8 +277,8 @@
   }
   .hist-bar{
     width:100%;
-    max-width:22px;
-    border-radius:3px 3px 0 0;
+    max-width:44px;
+    border-radius:4px 4px 0 0;
     transition:height .5s ease;
   }
   .hist-score{
@@ -362,24 +362,8 @@
     color:#a89a89;
     white-space:nowrap;
   }
-  .entry-glasses{ display:flex; align-items:center; gap:8px; }
-  .entry-score{
-    font-family:'Cormorant Garamond', serif;
-    font-size:20px;
-    font-weight:600;
-    color:var(--wine-900);
-  }
-  .entry-badge{
-    font-size:10px;
-    letter-spacing:.5px;
-    padding:3px 9px;
-    border-radius:20px;
-    color:#fff;
-    text-transform:uppercase;
-  }
-  .badge-detrator{ background:#a8563d; }
-  .badge-passivo{ background:var(--gold); }
-  .badge-promotor{ background:var(--wine-900); }
+  .entry-glasses{ display:flex; align-items:center; gap:3px; }
+  .entry-glasses svg{ width:16px; height:20px; }
   .entry-comment{
     font-size:13.5px;
     color:var(--ink);
@@ -435,11 +419,11 @@
   <div class="stats">
     <div class="stat-card">
       <div class="num" id="statTotal">0</div>
-      <div class="label">RESPOSTAS</div>
+      <div class="label">AVALIAÇÕES</div>
     </div>
     <div class="stat-card">
-      <div class="num" id="statNps">0</div>
-      <div class="label">NPS</div>
+      <div class="num" id="statAvg">0.0</div>
+      <div class="label">MÉDIA GERAL</div>
     </div>
     <div class="stat-card">
       <div class="num" id="statToday">0</div>
@@ -447,25 +431,9 @@
     </div>
   </div>
 
-  <div class="nps-card">
-    <div class="nps-card-top">
-      <h3>Classificação NPS</h3>
-      <div class="nps-legend">
-        <span><i class="dot" style="background:#a8563d"></i>Detratores</span>
-        <span><i class="dot" style="background:var(--gold)"></i>Neutros</span>
-        <span><i class="dot" style="background:var(--wine-900)"></i>Promotores</span>
-      </div>
-    </div>
-    <div class="nps-bar">
-      <div class="seg seg-detrator" id="segDetrator" style="width:0%"></div>
-      <div class="seg seg-passivo" id="segPassivo" style="width:0%"></div>
-      <div class="seg seg-promotor" id="segPromotor" style="width:0%"></div>
-    </div>
-  </div>
-
   <div class="histogram-card">
-    <h3>Votos por nota</h3>
-    <p class="histogram-sub">Quantas pessoas deram cada nota de 0 a 10</p>
+    <h3>Votos por taça</h3>
+    <p class="histogram-sub">Quantas pessoas deram cada nota de 0 a 5</p>
     <div class="histogram" id="histogram"></div>
   </div>
 
@@ -525,14 +493,6 @@
   });
 
   // ---------- Data ----------
-  function categoryOf(value){
-    if (value >= 9) return 'promotor';
-    if (value >= 7) return 'passivo';
-    return 'detrator';
-  }
-
-  const categoryLabel = { detrator:'Detrator', passivo:'Neutro', promotor:'Promotor' };
-
   let started = false;
   function startListening(){
     if (started) return;
@@ -548,8 +508,8 @@
   }
 
   function scoreColor(score){
-    if (score >= 9) return 'var(--wine-900)';
-    if (score >= 7) return 'var(--gold)';
+    if (score >= 4) return 'var(--wine-900)';
+    if (score === 3) return 'var(--gold)';
     return '#a8563d';
   }
 
@@ -558,42 +518,33 @@
     const todayStr = new Date().toDateString();
     const today = docs.filter(d => d.criadoEm && d.criadoEm.toDate().toDateString() === todayStr).length;
 
-    let detratores = 0, passivos = 0, promotores = 0, somaNotas = 0;
-    const counts = Array(11).fill(0);
+    let somaNotas = 0;
+    const counts = [0,0,0,0,0,0]; // índices 0–5
 
     docs.forEach(d => {
-      const nota = (typeof d.nota === 'number') ? d.nota : (typeof d.rating === 'number' ? d.rating : null);
-      const cat = d.categoria || categoryOf(nota || 0);
-      if (cat === 'detrator') detratores++;
-      else if (cat === 'passivo') passivos++;
-      else promotores++;
-
-      if (nota !== null && nota >= 0 && nota <= 10) {
+      const nota = (typeof d.rating === 'number') ? d.rating : (typeof d.nota === 'number' ? d.nota : null);
+      if (nota !== null && nota >= 0 && nota <= 5) {
         counts[nota]++;
         somaNotas += nota;
       }
     });
 
-    const nps = total ? Math.round(((promotores - detratores) / total) * 100) : 0;
     const media = total ? (somaNotas / total) : 0;
 
     document.getElementById('statTotal').textContent = total;
-    document.getElementById('statNps').textContent = nps;
+    document.getElementById('statAvg').textContent = media.toFixed(1);
     document.getElementById('statToday').textContent = today;
 
-    const pct = n => total ? (n/total*100) : 0;
-    document.getElementById('segDetrator').style.width = pct(detratores) + '%';
-    document.getElementById('segPassivo').style.width = pct(passivos) + '%';
-    document.getElementById('segPromotor').style.width = pct(promotores) + '%';
-
     renderHistogram(counts);
-    renderSummary({ total, nps, media, detratores, passivos, promotores, counts });
+    renderSummary({ total, media, counts });
   }
 
   function renderHistogram(counts){
-    const maxCount = Math.max(...counts, 1);
+    const scores = [0,1,2,3,4,5];
+    const maxCount = Math.max(...scores.map(s => counts[s]), 1);
     const el = document.getElementById('histogram');
-    el.innerHTML = counts.map((c, score) => {
+    el.innerHTML = scores.map(score => {
+      const c = counts[score];
       const heightPct = c ? Math.max((c / maxCount) * 100, 6) : 2;
       return `
         <div class="hist-col">
@@ -604,7 +555,7 @@
     }).join('');
   }
 
-  function renderSummary({ total, nps, media, detratores, passivos, promotores, counts }){
+  function renderSummary({ total, media, counts }){
     const summaryText = document.getElementById('summaryText');
     const summaryGrid = document.getElementById('summaryGrid');
 
@@ -614,34 +565,47 @@
       return;
     }
 
-    const pct = n => Math.round((n/total)*100);
+    const scores = [0,1,2,3,4,5];
     let notaMaisComum = 0;
-    counts.forEach((c, score) => { if (c > counts[notaMaisComum]) notaMaisComum = score; });
+    scores.forEach(s => { if (counts[s] > counts[notaMaisComum]) notaMaisComum = s; });
+
+    const satisfeitos = counts[4] + counts[5];
+    const insatisfeitos = counts[0] + counts[1] + counts[2];
+    const pctSatisfeitos = Math.round((satisfeitos/total)*100);
+    const pctInsatisfeitos = Math.round((insatisfeitos/total)*100);
 
     let nivel, comentario;
-    if (nps >= 75){
+    if (media >= 4.5){
       nivel = 'excelente';
-      comentario = 'a experiência está gerando forte recomendação espontânea entre os convidados.';
-    } else if (nps >= 50){
+      comentario = 'os convidados estão vivenciando uma experiência de degustação muito bem avaliada.';
+    } else if (media >= 3.8){
       nivel = 'muito bom';
-      comentario = 'a maioria dos convidados recomendaria a Vinuta, com espaço para conquistar os neutros.';
-    } else if (nps >= 0){
+      comentario = 'a maioria dos convidados avaliou bem a experiência, com espaço para encantar ainda mais.';
+    } else if (media >= 3){
       nivel = 'razoável';
-      comentario = 'há uma base de promotores, mas ainda existe uma parcela relevante de detratores a entender melhor.';
+      comentario = 'a experiência está sendo bem recebida, mas vale entender o que pesou nas notas mais baixas.';
     } else {
       nivel = 'de atenção';
-      comentario = 'o número de detratores supera o de promotores — vale investigar os pontos de insatisfação.';
+      comentario = 'as notas indicam pontos de insatisfação que merecem atenção.';
     }
 
-    summaryText.innerHTML = `Com base em <strong>${total}</strong> avaliação${total===1?'':'s'}, a Vinuta atingiu um NPS de <strong>${nps}</strong>, considerado <strong>${nivel}</strong>. A nota média foi <strong>${media.toFixed(1)}</strong> e a nota mais recorrente foi <strong>${notaMaisComum}</strong>. Em resumo, ${comentario}`;
+    summaryText.innerHTML = `Com base em <strong>${total}</strong> avaliação${total===1?'':'s'}, a nota média foi <strong>${media.toFixed(1)}</strong> de 5, considerada <strong>${nivel}</strong>. A nota mais recorrente foi <strong>${notaMaisComum}</strong>. Em resumo, ${comentario}`;
 
     summaryGrid.innerHTML = `
       <div class="summary-item"><div class="num">${media.toFixed(1)}</div><div class="label">Nota média</div></div>
-      <div class="summary-item"><div class="num">${pct(promotores)}%</div><div class="label">Promotores</div></div>
-      <div class="summary-item"><div class="num">${pct(passivos)}%</div><div class="label">Neutros</div></div>
-      <div class="summary-item"><div class="num">${pct(detratores)}%</div><div class="label">Detratores</div></div>
+      <div class="summary-item"><div class="num">${notaMaisComum}</div><div class="label">Nota mais comum</div></div>
+      <div class="summary-item"><div class="num">${pctSatisfeitos}%</div><div class="label">Notas 4–5</div></div>
+      <div class="summary-item"><div class="num">${pctInsatisfeitos}%</div><div class="label">Notas 0–2</div></div>
     `;
   }
+
+  const glassIcon = (filled) => `
+    <svg viewBox="0 0 34 46" xmlns="http://www.w3.org/2000/svg">
+      <path d="M7 3 C7 3 6 15 17 15 C28 15 27 3 27 3 Z" fill="${filled ? '#6e1424' : 'none'}" stroke="${filled ? '#4c1220' : '#c9b190'}" stroke-width="1.6"/>
+      <line x1="17" y1="15" x2="17" y2="34" stroke="${filled ? '#4c1220' : '#c9b190'}" stroke-width="1.6"/>
+      <line x1="9" y1="40" x2="25" y2="40" stroke="${filled ? '#4c1220' : '#c9b190'}" stroke-width="1.6" stroke-linecap="round"/>
+      <line x1="17" y1="34" x2="17" y2="40" stroke="${filled ? '#4c1220' : '#c9b190'}" stroke-width="1.6"/>
+    </svg>`;
 
   function renderList(docs){
     const list = document.getElementById('list');
@@ -651,15 +615,12 @@
     }
     list.innerHTML = docs.map(d => {
       const date = d.criadoEm ? d.criadoEm.toDate().toLocaleString('pt-BR') : '—';
-      const nota = (d.nota !== undefined) ? d.nota : (d.rating !== undefined ? d.rating : '—');
-      const cat = d.categoria || categoryOf(typeof nota === 'number' ? nota : 0);
+      const nota = (typeof d.rating === 'number') ? d.rating : (typeof d.nota === 'number' ? d.nota : 0);
+      const glasses = [1,2,3,4,5].map(i => glassIcon(i <= nota)).join('');
       return `
         <div class="entry">
           <div class="entry-top">
-            <div class="entry-glasses">
-              <span class="entry-score">${nota}/10</span>
-              <span class="entry-badge badge-${cat}">${categoryLabel[cat]}</span>
-            </div>
+            <div class="entry-glasses">${glasses}</div>
             <span class="entry-date">${date}</span>
           </div>
           ${d.comentario ? `<div class="entry-comment">${escapeHtml(d.comentario)}</div>` : ''}
