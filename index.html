@@ -203,7 +203,7 @@
   .rating-block{
     text-align:center;
     margin:34px 0 30px;
-    padding:24px 8px 20px;
+    padding:24px 4px 20px;
     background:linear-gradient(180deg, #fbf7ee 0%, #f7f0e2 100%);
     border:1px solid #e8dcc4;
     border-radius:6px;
@@ -288,23 +288,25 @@
 
   .glasses{
     display:flex;
+    flex-wrap:wrap;
     justify-content:center;
     align-items:flex-end;
-    gap:14px;
+    gap:6px 3px;
     margin-bottom:12px;
+    padding:0 2px;
   }
   .glass-wrap{
-    display:flex; flex-direction:column; align-items:center; gap:7px;
+    display:flex; flex-direction:column; align-items:center; gap:3px;
     cursor:pointer;
     -webkit-tap-highlight-color:transparent;
-    padding:3px;
+    padding:1px;
     position:relative;
   }
   .glass-wrap::before{
     content:"";
     position:absolute;
-    top:-4px; left:50%;
-    width:36px; height:36px;
+    top:-3px; left:50%;
+    width:24px; height:24px;
     transform:translate(-50%,0) scale(0.5);
     background:radial-gradient(circle, rgba(184,147,90,0.35) 0%, rgba(184,147,90,0) 70%);
     border-radius:50%;
@@ -314,7 +316,7 @@
   }
   .glass-wrap.selected::before{ opacity:1; transform:translate(-50%,0) scale(1); }
   .glass-wrap svg{
-    width:30px; height:42px;
+    width:19px; height:26px;
     overflow:visible;
     transition:transform .3s cubic-bezier(.34,1.56,.64,1), filter .3s ease;
     position:relative;
@@ -322,7 +324,7 @@
   .glass-wrap:hover svg{ transform:translateY(-3px); }
   .glass-wrap.selected svg{
     animation:glassPop .5s cubic-bezier(.34,1.56,.64,1);
-    filter:drop-shadow(0 5px 10px rgba(76,18,32,0.35));
+    filter:drop-shadow(0 4px 8px rgba(76,18,32,0.35));
   }
   @keyframes glassPop{
     0%{ transform:scale(1) translateY(0); }
@@ -356,14 +358,14 @@
   }
 
   .glass-num{
-    font-size:10.5px;
+    font-size:8.5px;
     color:#b7a58f;
     font-family:'Cormorant Garamond',serif;
     font-weight:600;
-    letter-spacing:.2px;
+    letter-spacing:0;
     transition:color .25s, background .25s, box-shadow .25s;
-    min-width:19px;
-    height:19px;
+    min-width:14px;
+    height:14px;
     display:flex; align-items:center; justify-content:center;
     border-radius:50%;
   }
@@ -374,6 +376,9 @@
   }
 
   .rating-hint{
+    display:block;
+    width:100%;
+    text-align:center;
     font-size:12px;
     color:var(--gold);
     font-style:italic;
@@ -623,7 +628,7 @@
 
       <div class="rating-block">
         <h3 class="rating-title">O quanto você recomendaria a Vinuta?</h3>
-        <p class="rating-desc">Numa escala de 1 a 5, para um amigo ou familiar</p>
+        <p class="rating-desc">Numa escala de 1 a 10, para um amigo ou familiar</p>
 
         <svg width="0" height="0" style="position:absolute">
           <defs>
@@ -711,25 +716,32 @@
   const hint = document.getElementById('ratingHint');
   let currentRating = null;
 
+  function tierOf(value){
+    if (value >= 9) return 'alta';
+    if (value >= 6) return 'media';
+    return 'baixa';
+  }
+
+  const successMsgByTier = {
+    baixa: "Agradecemos sua sinceridade.<br>Sua opinião é essencial para aprimorarmos cada detalhe da experiência Vinuta.",
+    media: "Obrigado por compartilhar sua experiência conosco.<br>Vamos trabalhar para tornar o próximo encontro ainda mais especial.",
+    alta: "Foi um prazer brindar este momento com você.<br>Que este seja apenas o primeiro de muitos encontros com a Vinuta."
+  };
+
   const hints = {
-    0: "Nada provável",
-    1: "Pouco provável",
-    2: "Pouco provável",
-    3: "Neutro",
-    4: "Muito provável",
-    5: "Extremamente provável"
+    1: "Nada provável",
+    2: "Nada provável",
+    3: "Pouco provável",
+    4: "Pouco provável",
+    5: "Neutro",
+    6: "Neutro",
+    7: "Provável",
+    8: "Muito provável",
+    9: "Muito provável",
+    10: "Extremamente provável"
   };
 
-  const successMsgByRating = {
-    0: "Agradecemos sua sinceridade.<br>Sua opinião é essencial para aprimorarmos cada detalhe da experiência Vinuta.",
-    1: "Agradecemos sua sinceridade.<br>Sua opinião é essencial para aprimorarmos cada detalhe da experiência Vinuta.",
-    2: "Agradecemos sua sinceridade.<br>Sua opinião é essencial para aprimorarmos cada detalhe da experiência Vinuta.",
-    3: "Obrigado por compartilhar sua experiência conosco.<br>Vamos trabalhar para tornar o próximo encontro ainda mais especial.",
-    4: "Foi um prazer brindar este momento com você.<br>Que este seja apenas o primeiro de muitos encontros com a Vinuta.",
-    5: "Foi um prazer brindar este momento com você.<br>Que este seja apenas o primeiro de muitos encontros com a Vinuta."
-  };
-
-  for(let i=1;i<=5;i++){
+  for(let i=1;i<=10;i++){
     const wrap = document.createElement('div');
     wrap.className = 'glass-wrap';
     wrap.dataset.value = i;
@@ -908,7 +920,7 @@
         criadoEm: firebase.firestore.FieldValue.serverTimestamp()
       });
 
-      document.getElementById('successMsg').innerHTML = successMsgByRating[currentRating];
+      document.getElementById('successMsg').innerHTML = successMsgByTier[tierOf(currentRating)];
 
       formScreen.classList.remove('active');
       successScreen.classList.add('active');
