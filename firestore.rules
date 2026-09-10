@@ -15,11 +15,11 @@ service cloud.firestore {
 
       // Qualquer visitante (sem login) pode CRIAR uma resposta,
       // desde que o documento contenha SOMENTE os campos "nota" e
-      // "criadoEm", com "nota" sendo um número inteiro entre 0 e 10.
+      // "criadoEm", com "nota" sendo um número inteiro entre 1 e 10.
       allow create: if
         request.resource.data.keys().hasOnly(['nota', 'criadoEm']) &&
         request.resource.data.nota is int &&
-        request.resource.data.nota >= 0 &&
+        request.resource.data.nota >= 1 &&
         request.resource.data.nota <= 10 &&
         request.resource.data.criadoEm == request.time;
 

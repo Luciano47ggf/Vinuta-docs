@@ -628,7 +628,7 @@
 
       <div class="rating-block">
         <h3 class="rating-title">O quanto você recomendaria a Vinuta?</h3>
-        <p class="rating-desc">Numa escala de 0 a 10, para um amigo ou familiar</p>
+        <p class="rating-desc">Numa escala de 1 a 10, para um amigo ou familiar</p>
 
         <svg width="0" height="0" style="position:absolute">
           <defs>
@@ -729,7 +729,6 @@
   };
 
   const hints = {
-    0: "Nada provável",
     1: "Nada provável",
     2: "Nada provável",
     3: "Pouco provável",
@@ -742,7 +741,7 @@
     10: "Extremamente provável"
   };
 
-  for(let i=0;i<=10;i++){
+  for(let i=1;i<=10;i++){
     const wrap = document.createElement('div');
     wrap.className = 'glass-wrap';
     wrap.dataset.value = i;

@@ -1,29 +1,31 @@
 // =====================================================================
 // CONFIGURAÇÃO DO FIREBASE — VINUTA (projeto: vinuta-qr)
 // =====================================================================
-// O projectId, authDomain e storageBucket abaixo já estão corretos para
-// o projeto "vinuta-qr". Faltam apenas 3 valores que são únicos da sua
-// conta e eu não tenho acesso a eles — pegue no Firebase Console:
+// Este arquivo é compartilhado por index.html e admin.html.
 //
-// 1. Acesse https://console.firebase.google.com → projeto "vinuta-qr"
-// 2. Engrenagem (⚙) → "Configurações do projeto"
-// 3. Role até "Seus apps" → clique no app Web (ou crie um com o ícone </>)
-// 4. Copie os valores de apiKey, messagingSenderId e appId que aparecem
-//    e cole substituindo os placeholders "COLE_AQUI_..." abaixo.
-//
-// Depois de preencher, suba este arquivo junto com index.html e
-// admin.html no GitHub.
+// IMPORTANTE: o index.html (formulário público) NÃO carrega o SDK
+// firebase-auth-compat.js, porque convidados não fazem login. Por isso
+// "auth" é montado com uma checagem defensiva abaixo — se o SDK de auth
+// não estiver presente na página, "auth" simplesmente vira null, em vez
+// de quebrar o formulário com um erro de "firebase.auth is not a
+// function".
 // =====================================================================
 
 const firebaseConfig = {
-  apiKey: "COLE_AQUI_SUA_API_KEY",
+  apiKey: "AIzaSyBpb5ZEJqNX5A2528Dyh8-N9gez_Ho2IcU",
   authDomain: "vinuta-qr.firebaseapp.com",
   projectId: "vinuta-qr",
-  storageBucket: "vinuta-qr.appspot.com",
-  messagingSenderId: "COLE_AQUI_SEU_MESSAGING_SENDER_ID",
-  appId: "COLE_AQUI_SEU_APP_ID"
+  storageBucket: "vinuta-qr.firebasestorage.app",
+  messagingSenderId: "834430313789",
+  appId: "1:834430313789:web:6f570ddb42f232b4421154",
+  measurementId: "G-GZL5NVCL3N"
 };
 
 firebase.initializeApp(firebaseConfig);
+
 const db = firebase.firestore();
-const auth = firebase.auth();
+
+const auth =
+  typeof firebase.auth === "function"
+    ? firebase.auth()
+    : null;

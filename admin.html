@@ -459,7 +459,7 @@
 
   <div class="histogram-card">
     <h3>Votos por nota</h3>
-    <p class="histogram-sub">Quantas pessoas deram cada nota de 0 a 10</p>
+    <p class="histogram-sub">Quantas pessoas deram cada nota de 1 a 10</p>
     <div class="histogram" id="histogram"></div>
   </div>
 
@@ -557,7 +557,7 @@
 
     docs.forEach(d => {
       const nota = (typeof d.nota === 'number') ? d.nota : null;
-      if (nota === null || nota < 0 || nota > 10) return;
+      if (nota === null || nota < 1 || nota > 10) return;
 
       counts[nota]++;
       somaNotas += nota;
@@ -586,7 +586,7 @@
   }
 
   function renderHistogram(counts){
-    const scores = [0,1,2,3,4,5,6,7,8,9,10];
+    const scores = [1,2,3,4,5,6,7,8,9,10];
     const maxCount = Math.max(...scores.map(s => counts[s]), 1);
     const el = document.getElementById('histogram');
     el.innerHTML = scores.map(score => {
@@ -611,8 +611,8 @@
       return;
     }
 
-    const scores = [0,1,2,3,4,5,6,7,8,9,10];
-    let notaMaisComum = 0;
+    const scores = [1,2,3,4,5,6,7,8,9,10];
+    let notaMaisComum = 1;
     scores.forEach(s => { if (counts[s] > counts[notaMaisComum]) notaMaisComum = s; });
 
     const pct = n => Math.round((n/total)*100);
