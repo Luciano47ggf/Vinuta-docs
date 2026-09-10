@@ -503,7 +503,7 @@
   function startListening(){
     if (started) return;
     started = true;
-    db.collection('avaliacoes').orderBy('criadoEm', 'desc').onSnapshot(snapshot => {
+    db.collection('nps_respostas').orderBy('criadoEm', 'desc').onSnapshot(snapshot => {
       const docs = snapshot.docs.map(d => d.data());
       renderStats(docs);
       renderList(docs);

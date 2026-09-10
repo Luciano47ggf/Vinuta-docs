@@ -915,8 +915,8 @@
     submitBtn.textContent = 'ENVIANDO...';
 
     try {
-      await db.collection('avaliacoes').add({
-        rating: currentRating,
+      await db.collection('nps_respostas').add({
+        nota: currentRating,
         criadoEm: firebase.firestore.FieldValue.serverTimestamp()
       });
 
