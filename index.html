@@ -203,7 +203,7 @@
   .rating-block{
     text-align:center;
     margin:34px 0 30px;
-    padding:24px 14px 20px;
+    padding:24px 8px 20px;
     background:linear-gradient(180deg, #fbf7ee 0%, #f7f0e2 100%);
     border:1px solid #e8dcc4;
     border-radius:6px;
@@ -230,30 +230,49 @@
     font-size:12px;
     color:var(--ink-soft);
     font-style:italic;
-    margin:0 0 22px;
+    margin:0 0 24px;
   }
   .glasses{
     display:flex;
     justify-content:center;
-    gap:14px;
+    align-items:flex-end;
+    gap:4px;
     margin-bottom:12px;
   }
   .glass-wrap{
-    display:flex; flex-direction:column; align-items:center; gap:8px;
+    display:flex; flex-direction:column; align-items:center; gap:5px;
     cursor:pointer;
     -webkit-tap-highlight-color:transparent;
-    padding:4px;
+    padding:2px;
+    position:relative;
   }
+  .glass-wrap::before{
+    content:"";
+    position:absolute;
+    top:-3px; left:50%;
+    width:26px; height:26px;
+    transform:translate(-50%,0) scale(0.5);
+    background:radial-gradient(circle, rgba(184,147,90,0.35) 0%, rgba(184,147,90,0) 70%);
+    border-radius:50%;
+    opacity:0;
+    transition:opacity .35s ease, transform .35s ease;
+    pointer-events:none;
+  }
+  .glass-wrap.selected::before{ opacity:1; transform:translate(-50%,0) scale(1); }
   .glass-wrap svg{
-    width:30px; height:42px;
+    width:23px; height:31px;
     overflow:visible;
-    transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+    transition:transform .3s cubic-bezier(.34,1.56,.64,1), filter .3s ease;
+    position:relative;
   }
   .glass-wrap:hover svg{ transform:translateY(-3px); }
-  .glass-wrap.selected svg{ animation:glassPop .5s cubic-bezier(.34,1.56,.64,1); }
+  .glass-wrap.selected svg{
+    animation:glassPop .5s cubic-bezier(.34,1.56,.64,1);
+    filter:drop-shadow(0 4px 8px rgba(76,18,32,0.35));
+  }
   @keyframes glassPop{
     0%{ transform:scale(1) translateY(0); }
-    35%{ transform:scale(1.18) translateY(-7px); }
+    35%{ transform:scale(1.22) translateY(-6px); }
     60%{ transform:scale(0.95) translateY(0px); }
     100%{ transform:scale(1) translateY(0); }
   }
@@ -264,7 +283,7 @@
   .glass-outline{
     fill:none;
     stroke:#c9b190;
-    stroke-width:1.6;
+    stroke-width:1.5;
     transition:stroke .3s;
   }
   .selected .glass-outline{ stroke:var(--wine-800); }
@@ -283,13 +302,34 @@
   }
 
   .glass-num{
-    font-size:10.5px;
+    font-size:9px;
     color:#b7a58f;
     font-family:'Cormorant Garamond',serif;
-    letter-spacing:.5px;
-    transition:color .25s, font-weight .25s;
+    font-weight:600;
+    letter-spacing:0;
+    transition:color .25s, background .25s, box-shadow .25s;
+    min-width:16px;
+    height:16px;
+    display:flex; align-items:center; justify-content:center;
+    border-radius:50%;
   }
-  .selected .glass-num{ color:var(--wine-900); font-weight:600; }
+  .selected .glass-num{
+    color:var(--cream);
+    background:var(--wine-900);
+    box-shadow:0 3px 7px -1px rgba(76,18,32,0.45);
+  }
+
+  .scale-labels{
+    display:flex;
+    justify-content:space-between;
+    max-width:250px;
+    margin:0 auto 16px;
+    font-size:9.5px;
+    letter-spacing:.5px;
+    color:#b7a58f;
+    text-transform:uppercase;
+    font-style:italic;
+  }
 
   .rating-hint{
     font-size:12px;
@@ -539,31 +579,29 @@
       <h2 class="section-title">Suas impressões</h2>
       <p class="section-sub">Um momento para guardar.</p>
 
-      <div class="field">
-        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c0-3.6 3.1-6.2 7-6.2s7 2.6 7 6.2" stroke-linecap="round"/></svg></span>
-        <input type="text" id="nome" placeholder="Seu nome">
-      </div>
-      <div class="field">
-        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M6.6 10.5c1.4 2.8 3.6 5 6.4 6.4l2.1-2.1c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.5.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.8c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.5.1.4 0 .8-.2 1z" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        <input type="text" id="telefone" placeholder="Telefone / WhatsApp">
-      </div>
-
       <div class="rating-block">
-        <h3 class="rating-title">Experiência de degustação</h3>
-        <p class="rating-desc">Como você descreveria este vinho?</p>
+        <h3 class="rating-title">O quanto você recomendaria a Vinuta?</h3>
+        <p class="rating-desc">Numa escala de 0 a 10, para um amigo ou familiar</p>
 
+        <svg width="0" height="0" style="position:absolute">
+          <defs>
+            <linearGradient id="wineGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#8f2540"/>
+              <stop offset="100%" stop-color="#48101c"/>
+            </linearGradient>
+          </defs>
+        </svg>
         <div class="glasses" id="glasses"></div>
-        <div class="rating-hint" id="ratingHint">Toque em uma taça para escolher</div>
-      </div>
-
-      <p class="memory-label"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8a6a3a" stroke-width="1.5"><path d="M21 12c0 4-4 7-9 7-1 0-2-.1-2.9-.4L4 20l1.5-3.6C4.6 15 4 13.6 4 12c0-4 4-7 9-7s8 3 8 7z" stroke-linecap="round" stroke-linejoin="round"/></svg> O que ficou na memória?</p>
-      <div class="field">
-        <textarea id="comentario" placeholder="Conte-nos seus comentários..."></textarea>
+        <div class="scale-labels">
+          <span>pouco provável</span>
+          <span>muito provável</span>
+        </div>
+        <div class="rating-hint" id="ratingHint">Toque em uma taça para escolher sua nota</div>
       </div>
 
       <button class="submit-btn" id="submitBtn">FINALIZAR AVALIAÇÃO</button>
       <p class="form-error" id="formError"></p>
-      <p class="footer-note">Seus dados são utilizados apenas para este contato.</p>
+      <p class="footer-note">Obrigado por avaliar sua experiência com a Vinuta.</p>
     </div>
   </div>
 
@@ -594,7 +632,7 @@
 
     <h1>Avaliação concluída!</h1>
     <div class="div-orn" style="opacity:1;"><span class="line"></span><span class="dot">◇</span><span class="line right"></span></div>
-    <p class="msg">Foi um prazer brindar este momento com você.<br>Que este seja apenas o primeiro de muitos encontros com a Vinuta</p>
+    <p class="msg" id="successMsg">Foi um prazer brindar este momento com você.<br>Que este seja apenas o primeiro de muitos encontros com a Vinuta</p>
 
     <button class="conclude-btn" id="concludeBtn">CONCLUIR</button>
     <p class="footer-note">Até a próxima taça.</p>
@@ -603,36 +641,30 @@
 </div>
 
 <script>
-  // Build 5 animated wine glasses for rating
+  // Build 11 animated wine glasses (NPS scale 0–10)
   const glassesContainer = document.getElementById('glasses');
   const hint = document.getElementById('ratingHint');
-  let currentRating = 0;
+  let currentRating = null;
 
-  const hints = {
-    1: "Não gostei muito",
-    2: "Razoável",
-    3: "Gostei",
-    4: "Muito bom",
-    5: "Excepcional!"
-  };
-
-  function makeGlassSVG(){
-    return `
-      <svg viewBox="0 0 34 46" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <clipPath id="clip-${Math.random().toString(36).slice(2)}"></clipPath>
-        </defs>
-        <g class="fillGroup"></g>
-        <path class="glass-outline" d="M7 3 C7 3 6 15 17 15 C28 15 27 3 27 3 Z" />
-        <line class="glass-outline" x1="17" y1="15" x2="17" y2="34" />
-        <line class="glass-outline" x1="9" y1="40" x2="25" y2="40" stroke-linecap="round"/>
-        <line class="glass-outline" x1="17" y1="34" x2="17" y2="40" />
-        <path class="glass-shine" d="M10 5 C10 5 10 11 14 13" fill="none" stroke="#f2e6d3" stroke-width="1.4" stroke-linecap="round"/>
-      </svg>
-    `;
+  function categoryOf(value){
+    if(value >= 9) return 'promotor';
+    if(value >= 7) return 'passivo';
+    return 'detrator';
   }
 
-  for(let i=1;i<=5;i++){
+  const hintByCategory = {
+    detrator: "Obrigado pela sinceridade — vamos melhorar.",
+    passivo: "Que bom que gostou da experiência.",
+    promotor: "Que alegria! Obrigado por recomendar a Vinuta."
+  };
+
+  const successMsgByCategory = {
+    detrator: "Agradecemos sua sinceridade.<br>Sua opinião é essencial para aprimorarmos cada detalhe da experiência Vinuta.",
+    passivo: "Obrigado por compartilhar sua experiência conosco.<br>Vamos trabalhar para tornar o próximo encontro ainda mais especial.",
+    promotor: "Foi um prazer brindar este momento com você.<br>Que este seja apenas o primeiro de muitos encontros com a Vinuta."
+  };
+
+  for(let i=0;i<=10;i++){
     const wrap = document.createElement('div');
     wrap.className = 'glass-wrap';
     wrap.dataset.value = i;
@@ -645,7 +677,7 @@
             <path d="M7 3 C7 3 6 15 17 15 C28 15 27 3 27 3 Z"/>
           </clipPath>
         </defs>
-        <rect class="glass-fill" x="6" y="15" width="22" height="0" fill="#6e1424" clip-path="url(#${uid})"/>
+        <rect class="glass-fill" x="6" y="15" width="22" height="0" fill="url(#wineGradient)" clip-path="url(#${uid})"/>
         <path class="glass-outline" d="M7 3 C7 3 6 15 17 15 C28 15 27 3 27 3 Z" />
         <line class="glass-outline" x1="17" y1="15" x2="17" y2="34" />
         <line class="glass-outline" x1="9" y1="40" x2="25" y2="40" stroke-linecap="round"/>
@@ -665,9 +697,8 @@
     allWraps.forEach(w => {
       const v = parseInt(w.dataset.value);
       const fillRect = w.querySelector('.glass-fill');
-      if(v <= value){
+      if(v === value){
         w.classList.add('selected');
-        // fill height proportional, capped
         fillRect.setAttribute('height', '11');
         fillRect.setAttribute('y', '4');
       } else {
@@ -676,7 +707,7 @@
         fillRect.setAttribute('y', '15');
       }
     });
-    hint.textContent = hints[value] || '';
+    hint.textContent = hintByCategory[categoryOf(value)];
     hint.style.color = 'var(--gold)';
   }
 
@@ -688,18 +719,10 @@
   const formError = document.getElementById('formError');
 
   submitBtn.addEventListener('click', async () => {
-    const nome = document.getElementById('nome').value.trim();
-    const telefone = document.getElementById('telefone').value.trim();
-    const comentario = document.getElementById('comentario').value.trim();
-
     formError.textContent = '';
 
-    if (!nome) {
-      formError.textContent = 'Por favor, conte-nos seu nome.';
-      return;
-    }
-    if (!currentRating) {
-      formError.textContent = 'Escolha uma taça para avaliar a experiência.';
+    if (currentRating === null) {
+      formError.textContent = 'Escolha uma taça de 0 a 10 para dar sua nota.';
       return;
     }
 
@@ -708,12 +731,12 @@
 
     try {
       await db.collection('avaliacoes').add({
-        nome,
-        telefone,
-        rating: currentRating,
-        comentario,
+        nota: currentRating,
+        categoria: categoryOf(currentRating),
         criadoEm: firebase.firestore.FieldValue.serverTimestamp()
       });
+
+      document.getElementById('successMsg').innerHTML = successMsgByCategory[categoryOf(currentRating)];
 
       formScreen.classList.remove('active');
       successScreen.classList.add('active');
@@ -736,17 +759,14 @@
     finalGlassHolder.classList.remove('play');
     formScreen.classList.add('active');
     // reset form state
-    currentRating = 0;
+    currentRating = null;
     glassesContainer.querySelectorAll('.glass-wrap').forEach(w=>{
       w.classList.remove('selected');
       const fillRect = w.querySelector('.glass-fill');
       fillRect.setAttribute('height','0');
       fillRect.setAttribute('y','15');
     });
-    hint.textContent = 'Toque em uma taça para escolher';
-    document.getElementById('nome').value='';
-    document.getElementById('telefone').value='';
-    document.getElementById('comentario').value='';
+    hint.textContent = 'Toque em uma taça para escolher sua nota';
     formError.textContent = '';
   });
 </script>

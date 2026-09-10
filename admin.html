@@ -196,6 +196,149 @@
     margin-top:2px;
   }
 
+  /* NPS breakdown bar */
+  .nps-card{
+    background:var(--cream);
+    border:1px solid #e8dcc4;
+    border-radius:10px;
+    padding:18px 20px;
+    margin-bottom:26px;
+  }
+  .nps-card-top{
+    display:flex; justify-content:space-between; align-items:baseline;
+    margin-bottom:12px;
+  }
+  .nps-card-top h3{
+    font-family:'Cormorant Garamond', serif;
+    font-size:16px;
+    color:var(--wine-900);
+    margin:0;
+  }
+  .nps-legend{
+    display:flex; gap:14px;
+    font-size:11px;
+    color:var(--ink-soft);
+  }
+  .nps-legend span{ display:flex; align-items:center; gap:5px; }
+  .nps-legend .dot{ width:8px; height:8px; border-radius:50%; display:inline-block; }
+  .nps-bar{
+    display:flex;
+    width:100%;
+    height:14px;
+    border-radius:7px;
+    overflow:hidden;
+    background:#eee2cc;
+  }
+  .nps-bar .seg{ height:100%; transition:width .5s ease; }
+  .seg-detrator{ background:#a8563d; }
+  .seg-passivo{ background:var(--gold); }
+  .seg-promotor{ background:var(--wine-900); }
+
+  /* Histogram */
+  .histogram-card{
+    background:var(--cream);
+    border:1px solid #e8dcc4;
+    border-radius:10px;
+    padding:18px 20px 14px;
+    margin-bottom:26px;
+  }
+  .histogram-card h3{
+    font-family:'Cormorant Garamond', serif;
+    font-size:16px;
+    color:var(--wine-900);
+    margin:0 0 2px;
+  }
+  .histogram-sub{
+    font-size:11.5px;
+    color:var(--ink-soft);
+    font-style:italic;
+    margin:0 0 18px;
+  }
+  .histogram{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:6px;
+    height:110px;
+  }
+  .hist-col{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-end;
+    height:100%;
+  }
+  .hist-count{
+    font-size:10px;
+    color:var(--ink-soft);
+    margin-bottom:4px;
+    min-height:12px;
+  }
+  .hist-bar{
+    width:100%;
+    max-width:22px;
+    border-radius:3px 3px 0 0;
+    transition:height .5s ease;
+  }
+  .hist-score{
+    font-size:10.5px;
+    color:var(--ink-soft);
+    margin-top:6px;
+    font-family:'Cormorant Garamond', serif;
+    font-weight:600;
+  }
+
+  /* Summary */
+  .summary-card{
+    background:linear-gradient(180deg, #fbf7ee 0%, #f4ecdc 100%);
+    border:1px solid #e8dcc4;
+    border-radius:10px;
+    padding:26px 24px;
+    margin-top:30px;
+  }
+  .summary-card h2{
+    font-family:'Cormorant Garamond', serif;
+    font-size:21px;
+    color:var(--wine-900);
+    margin:0 0 12px;
+    text-align:center;
+  }
+  .summary-text{
+    font-size:14px;
+    line-height:1.7;
+    color:var(--ink);
+    text-align:center;
+    max-width:480px;
+    margin:0 auto 22px;
+  }
+  .summary-grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:12px;
+  }
+  @media (max-width:560px){ .summary-grid{ grid-template-columns:repeat(2, 1fr); } }
+  .summary-item{
+    text-align:center;
+    padding:14px 8px;
+    background:rgba(255,255,255,0.5);
+    border-radius:8px;
+    border:1px solid #e8dcc4;
+  }
+  .summary-item .num{
+    font-family:'Cormorant Garamond', serif;
+    font-size:22px;
+    font-weight:600;
+    color:var(--wine-900);
+  }
+  .summary-item .label{
+    font-size:10px;
+    letter-spacing:.4px;
+    color:var(--ink-soft);
+    text-transform:uppercase;
+    margin-top:2px;
+  }
+
   /* List */
   .list-title{
     font-family:'Cormorant Garamond', serif;
@@ -211,28 +354,32 @@
     margin-bottom:12px;
   }
   .entry-top{
-    display:flex; justify-content:space-between; align-items:flex-start;
+    display:flex; justify-content:space-between; align-items:center;
     gap:10px;
-    margin-bottom:6px;
-  }
-  .entry-name{
-    font-family:'Cormorant Garamond', serif;
-    font-size:17px;
-    font-weight:600;
-    color:var(--wine-900);
   }
   .entry-date{
     font-size:11px;
     color:#a89a89;
     white-space:nowrap;
   }
-  .entry-phone{
-    font-size:12.5px;
-    color:var(--ink-soft);
-    margin-bottom:8px;
+  .entry-glasses{ display:flex; align-items:center; gap:8px; }
+  .entry-score{
+    font-family:'Cormorant Garamond', serif;
+    font-size:20px;
+    font-weight:600;
+    color:var(--wine-900);
   }
-  .entry-glasses{ display:flex; gap:3px; margin-bottom:8px; }
-  .entry-glasses svg{ width:16px; height:20px; }
+  .entry-badge{
+    font-size:10px;
+    letter-spacing:.5px;
+    padding:3px 9px;
+    border-radius:20px;
+    color:#fff;
+    text-transform:uppercase;
+  }
+  .badge-detrator{ background:#a8563d; }
+  .badge-passivo{ background:var(--gold); }
+  .badge-promotor{ background:var(--wine-900); }
   .entry-comment{
     font-size:13.5px;
     color:var(--ink);
@@ -240,6 +387,7 @@
     line-height:1.5;
     border-left:2px solid var(--gold-light);
     padding-left:10px;
+    margin-top:10px;
   }
   .empty-state, .loading-state{
     text-align:center;
@@ -287,11 +435,11 @@
   <div class="stats">
     <div class="stat-card">
       <div class="num" id="statTotal">0</div>
-      <div class="label">AVALIAÇÕES</div>
+      <div class="label">RESPOSTAS</div>
     </div>
     <div class="stat-card">
-      <div class="num" id="statAvg">0.0</div>
-      <div class="label">MÉDIA GERAL</div>
+      <div class="num" id="statNps">0</div>
+      <div class="label">NPS</div>
     </div>
     <div class="stat-card">
       <div class="num" id="statToday">0</div>
@@ -299,8 +447,36 @@
     </div>
   </div>
 
+  <div class="nps-card">
+    <div class="nps-card-top">
+      <h3>Classificação NPS</h3>
+      <div class="nps-legend">
+        <span><i class="dot" style="background:#a8563d"></i>Detratores</span>
+        <span><i class="dot" style="background:var(--gold)"></i>Neutros</span>
+        <span><i class="dot" style="background:var(--wine-900)"></i>Promotores</span>
+      </div>
+    </div>
+    <div class="nps-bar">
+      <div class="seg seg-detrator" id="segDetrator" style="width:0%"></div>
+      <div class="seg seg-passivo" id="segPassivo" style="width:0%"></div>
+      <div class="seg seg-promotor" id="segPromotor" style="width:0%"></div>
+    </div>
+  </div>
+
+  <div class="histogram-card">
+    <h3>Votos por nota</h3>
+    <p class="histogram-sub">Quantas pessoas deram cada nota de 0 a 10</p>
+    <div class="histogram" id="histogram"></div>
+  </div>
+
   <h2 class="list-title">Últimas avaliações</h2>
   <div id="list"><div class="loading-state">Carregando...</div></div>
+
+  <div class="summary-card" id="summaryCard">
+    <h2>Resumo do desempenho</h2>
+    <p class="summary-text" id="summaryText">Aguardando avaliações...</p>
+    <div class="summary-grid" id="summaryGrid"></div>
+  </div>
 </div>
 
 <script>
@@ -349,13 +525,13 @@
   });
 
   // ---------- Data ----------
-  const glassIcon = (filled) => `
-    <svg viewBox="0 0 34 46" xmlns="http://www.w3.org/2000/svg">
-      <path d="M7 3 C7 3 6 15 17 15 C28 15 27 3 27 3 Z" fill="${filled ? '#6e1424' : 'none'}" stroke="${filled ? '#4c1220' : '#c9b190'}" stroke-width="1.6"/>
-      <line x1="17" y1="15" x2="17" y2="34" stroke="${filled ? '#4c1220' : '#c9b190'}" stroke-width="1.6"/>
-      <line x1="9" y1="40" x2="25" y2="40" stroke="${filled ? '#4c1220' : '#c9b190'}" stroke-width="1.6" stroke-linecap="round"/>
-      <line x1="17" y1="34" x2="17" y2="40" stroke="${filled ? '#4c1220' : '#c9b190'}" stroke-width="1.6"/>
-    </svg>`;
+  function categoryOf(value){
+    if (value >= 9) return 'promotor';
+    if (value >= 7) return 'passivo';
+    return 'detrator';
+  }
+
+  const categoryLabel = { detrator:'Detrator', passivo:'Neutro', promotor:'Promotor' };
 
   let started = false;
   function startListening(){
@@ -371,15 +547,100 @@
     });
   }
 
+  function scoreColor(score){
+    if (score >= 9) return 'var(--wine-900)';
+    if (score >= 7) return 'var(--gold)';
+    return '#a8563d';
+  }
+
   function renderStats(docs){
     const total = docs.length;
-    const avg = total ? (docs.reduce((s,d) => s + (d.rating||0), 0) / total) : 0;
     const todayStr = new Date().toDateString();
     const today = docs.filter(d => d.criadoEm && d.criadoEm.toDate().toDateString() === todayStr).length;
 
+    let detratores = 0, passivos = 0, promotores = 0, somaNotas = 0;
+    const counts = Array(11).fill(0);
+
+    docs.forEach(d => {
+      const nota = (typeof d.nota === 'number') ? d.nota : (typeof d.rating === 'number' ? d.rating : null);
+      const cat = d.categoria || categoryOf(nota || 0);
+      if (cat === 'detrator') detratores++;
+      else if (cat === 'passivo') passivos++;
+      else promotores++;
+
+      if (nota !== null && nota >= 0 && nota <= 10) {
+        counts[nota]++;
+        somaNotas += nota;
+      }
+    });
+
+    const nps = total ? Math.round(((promotores - detratores) / total) * 100) : 0;
+    const media = total ? (somaNotas / total) : 0;
+
     document.getElementById('statTotal').textContent = total;
-    document.getElementById('statAvg').textContent = avg.toFixed(1);
+    document.getElementById('statNps').textContent = nps;
     document.getElementById('statToday').textContent = today;
+
+    const pct = n => total ? (n/total*100) : 0;
+    document.getElementById('segDetrator').style.width = pct(detratores) + '%';
+    document.getElementById('segPassivo').style.width = pct(passivos) + '%';
+    document.getElementById('segPromotor').style.width = pct(promotores) + '%';
+
+    renderHistogram(counts);
+    renderSummary({ total, nps, media, detratores, passivos, promotores, counts });
+  }
+
+  function renderHistogram(counts){
+    const maxCount = Math.max(...counts, 1);
+    const el = document.getElementById('histogram');
+    el.innerHTML = counts.map((c, score) => {
+      const heightPct = c ? Math.max((c / maxCount) * 100, 6) : 2;
+      return `
+        <div class="hist-col">
+          <span class="hist-count">${c || ''}</span>
+          <div class="hist-bar" style="height:${heightPct}%; background:${scoreColor(score)}; opacity:${c ? 1 : 0.25}"></div>
+          <span class="hist-score">${score}</span>
+        </div>`;
+    }).join('');
+  }
+
+  function renderSummary({ total, nps, media, detratores, passivos, promotores, counts }){
+    const summaryText = document.getElementById('summaryText');
+    const summaryGrid = document.getElementById('summaryGrid');
+
+    if (!total){
+      summaryText.textContent = 'Assim que as primeiras avaliações chegarem, o resumo de desempenho aparece aqui.';
+      summaryGrid.innerHTML = '';
+      return;
+    }
+
+    const pct = n => Math.round((n/total)*100);
+    let notaMaisComum = 0;
+    counts.forEach((c, score) => { if (c > counts[notaMaisComum]) notaMaisComum = score; });
+
+    let nivel, comentario;
+    if (nps >= 75){
+      nivel = 'excelente';
+      comentario = 'a experiência está gerando forte recomendação espontânea entre os convidados.';
+    } else if (nps >= 50){
+      nivel = 'muito bom';
+      comentario = 'a maioria dos convidados recomendaria a Vinuta, com espaço para conquistar os neutros.';
+    } else if (nps >= 0){
+      nivel = 'razoável';
+      comentario = 'há uma base de promotores, mas ainda existe uma parcela relevante de detratores a entender melhor.';
+    } else {
+      nivel = 'de atenção';
+      comentario = 'o número de detratores supera o de promotores — vale investigar os pontos de insatisfação.';
+    }
+
+    summaryText.innerHTML = `Com base em <strong>${total}</strong> avaliação${total===1?'':'s'}, a Vinuta atingiu um NPS de <strong>${nps}</strong>, considerado <strong>${nivel}</strong>. A nota média foi <strong>${media.toFixed(1)}</strong> e a nota mais recorrente foi <strong>${notaMaisComum}</strong>. Em resumo, ${comentario}`;
+
+    summaryGrid.innerHTML = `
+      <div class="summary-item"><div class="num">${media.toFixed(1)}</div><div class="label">Nota média</div></div>
+      <div class="summary-item"><div class="num">${pct(promotores)}%</div><div class="label">Promotores</div></div>
+      <div class="summary-item"><div class="num">${pct(passivos)}%</div><div class="label">Neutros</div></div>
+      <div class="summary-item"><div class="num">${pct(detratores)}%</div><div class="label">Detratores</div></div>
+    `;
   }
 
   function renderList(docs){
@@ -390,15 +651,17 @@
     }
     list.innerHTML = docs.map(d => {
       const date = d.criadoEm ? d.criadoEm.toDate().toLocaleString('pt-BR') : '—';
-      const glasses = [1,2,3,4,5].map(i => glassIcon(i <= (d.rating||0))).join('');
+      const nota = (d.nota !== undefined) ? d.nota : (d.rating !== undefined ? d.rating : '—');
+      const cat = d.categoria || categoryOf(typeof nota === 'number' ? nota : 0);
       return `
         <div class="entry">
           <div class="entry-top">
-            <span class="entry-name">${escapeHtml(d.nome || 'Sem nome')}</span>
+            <div class="entry-glasses">
+              <span class="entry-score">${nota}/10</span>
+              <span class="entry-badge badge-${cat}">${categoryLabel[cat]}</span>
+            </div>
             <span class="entry-date">${date}</span>
           </div>
-          ${d.telefone ? `<div class="entry-phone">${escapeHtml(d.telefone)}</div>` : ''}
-          <div class="entry-glasses">${glasses}</div>
           ${d.comentario ? `<div class="entry-comment">${escapeHtml(d.comentario)}</div>` : ''}
         </div>`;
     }).join('');
